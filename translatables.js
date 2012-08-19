@@ -142,6 +142,9 @@
 			domain = domainMatch[1]
 			name = domainMatch[2];
 		}
+		if(name===""){
+			throw new Error("Placeholder names must not be empty.");
+		}
 		return new Placeholder(name, language.getDomain(domain));
 	};
 

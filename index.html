@@ -16,10 +16,14 @@
 			<form class="form-horizontal well">
 				<fieldset>
 					<legend>Instantly updating translation playground</legend>
+					<div class="alert alert-error" id="errorAlert" style="display:none">
+						<strong id="errorType"> </strong>
+						<span id="errorMessage"> </span>
+					</div>
 					<div class="control-group" id="sourceKeyControlGroup">
 						<label class="control-label">Source Key</label>
 						<div class="controls">
-							<input type="text" class="input-xxlarge" id="sourceKey" value="Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.">
+							<input type="text" class="input-xxlarge" id="sourceKey" value="Pop it in the oven for {number(h)} hours and {number(other)} minutes.">
 							<p class="help-block">Key as it would be written in the source code in the application's translation call.</p>
 						</div>
 					</div>
@@ -27,14 +31,10 @@
 						<label class="control-label">Replacements</label>
 						<div class="controls">
 							<textarea class="input-xxlarge" id="valuesJSON" style="min-height:75px">{
-	"placeholderName": 3,
+	"h": 3,
 	"other": 45
 }</textarea>
 							<p class="help-block">Data to be inserted into the translation patterns. Provide valid JSON here.</p>
-							<div class="alert alert-error" id="errorAlert" style="display:none">
-								<strong id="errorType"> </strong>
-								<span id="errorMessage"> </span>
-							</div>
 						</div>
 				 	</div>
 					<div class="control-group">
@@ -42,29 +42,32 @@
 						<div class="controls">
 							<table class="table table-striped">
 								<thead>
-									<tr><th>Translation Key</th><th>Translation pattern</th></tr>
+									<tr><th>Automatically generated translation key</th><th>Translation produced by human translator</th></tr>
 								</thead>
 								<tbody id="translationKeys"></tbody>
 							</table>
 							<p class="help-block">The keys that need to be provided in the translation files. Required keys depend on the replacements' values domains.</p>
 							<p class="help-block">
 								<span class="label label-info">So many?</span>
-								Multiple translation keys for a single source key are supported and required to get the details right by using the correct plural or gender for example. The number of translation keys required depends on the target language and value domains.
+								Multiple translation keys for a single source key are required to get the details right by using the correct plural or gender for example. The number of translation keys depends on the target language and value domains. Rules for German are used in this demo.
 							</p>
 						</div>
 					</div>
 				</fieldset>
 			</form>
-			<blockquote>
-				<p id="translationResult">There goes the result.</p>
-				<small>Your input. Processed.</small>
-			</blockquote>
+			<div class="row-fluid">
+				<blockquote class="span6">
+					<p id="translationResult">There goes the result.</p>
+					<small>Your input. Processed.</small>
+				</blockquote>
+				<div class="alert alert-info span6">The translation to the left updates automatically as you type in the form above!</div>
+			</div>
 			<script type="text/javascript">
 			translatables.translationMemory.updateTranslations("de_DE", {
-				"Pop it in the oven for {one(number(h))} hours and {one(number(other))} minute.": "Schieb es für {h} Stunde und {other} Minute in den Ofen.",
-				"Pop it in the oven for {one(number(h))} hours and {multiple(number(other))} minute.": "Schieb es für {h} Stunde und {other} Minuten in den Ofen.",
-				"Pop it in the oven for {multiple(number(h))} hours and {one(number(other))} minute.": "Schieb es für {h} Stunden und {other} Minute in den Ofen.",
-				"Pop it in the oven for {multiple(number(h))} hours and {multiple(number(other))} minute.": "Schieb es für {h} Stunden und {other} Minuten in den Ofen."
+				"Pop it in the oven for {one(number(h))} hours and {one(number(other))} minutes.": "Schieb es für {h} Stunde und {other} Minute in den Ofen.",
+				"Pop it in the oven for {one(number(h))} hours and {multiple(number(other))} minutes.": "Schieb es für {h} Stunde und {other} Minuten in den Ofen.",
+				"Pop it in the oven for {multiple(number(h))} hours and {one(number(other))} minutes.": "Schieb es für {h} Stunden und {other} Minute in den Ofen.",
+				"Pop it in the oven for {multiple(number(h))} hours and {multiple(number(other))} minutes.": "Schieb es für {h} Stunden und {other} Minuten in den Ofen."
 			});
 			(function(){
 				var translation;
@@ -73,6 +76,7 @@
 				var valuesJSON = document.getElementById("valuesJSON");
 				var translationKeys = document.getElementById("translationKeys");
 				var translationResult = document.getElementById("translationResult");
+				var language = translatables.translationMemory.getLanguage("de_DE");
 				function showError(e, controlGroup){
 					controlGroup.classList.add("error");
 					document.getElementById("errorAlert").style.display = "";
@@ -85,11 +89,26 @@
 					});
 					document.getElementById("errorAlert").style.display = "none";
 				}
+				function updateTranslationObject(){
+					try {
+						translation = new translatables.Translation(sourceKey.value, language);
+						return true;
+					} catch(e){
+						showError(e, document.getElementById("sourceKeyControlGroup"));
+						return false;
+					}
+				}
 				function updateTranslationResult(){
+					// Validate source key
+					var sourceKeyValid = updateTranslationObject();
+					if(sourceKeyValid){
+						hideError();
+					}
+					
+					// Update result with values
 					try {
 						var values = JSON.parse(valuesJSON.value);
 						translationResult.firstChild.nodeValue = translation.translate(values);
-						hideError();
 					} catch(e) {
 						showError(e, valuesControlGroup);
 						return;
@@ -97,12 +116,7 @@
 				}
 				valuesJSON.onkeyup = updateTranslationResult;
 				function updateTranslationKeys(){
-					var language = translatables.translationMemory.getLanguage("de_DE");
-					try {
-						translation = new translatables.Translation(sourceKey.value, language);
-						hideError();
-					} catch(e){
-						showError(e, document.getElementById("sourceKeyControlGroup"));
+					if(updateTranslationObject()===false){
 						return;
 					}
 					translationKeys.innerHTML = "";
@@ -187,8 +201,8 @@ translation.translate({
 			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
 			<h2>Extracting translations</h2>
 			<p>A node based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
-			<pre>node extract --language de_DE --discard-unused --codebase your-code.html</pre>
-			<p>The call would parse <code>index.html</code> for translatable strings and generate/update a JSON file with the translation keys for the German language.</p>
+			<pre>node extract --language de_DE --codebase your/application/folder</pre>
+			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language.</p>
 			
 			<h1>About</h1>
 			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenace are guarenteed – so feel free to use it at your own risk.</p>
