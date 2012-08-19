@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Domain Aware Translations</title>
+		<meta charset='utf-8'>
+		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+		<script type="text/javascript" src="translatables.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="page-header">
+				<h1>Domain aware translations
+					<small>Mastering language variety in software translations</small>
+				</h1>
+			</div>
+			<form class="form-horizontal well">
+				<fieldset>
+					<legend>Instantly updating translation playground</legend>
+					<div class="control-group" id="sourceKeyControlGroup">
+						<label class="control-label">Source Key</label>
+						<div class="controls">
+							<input type="text" class="input-xxlarge" id="sourceKey" value="Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.">
+							<p class="help-block">Key as it would be written in the source code in the application's translation call.</p>
+						</div>
+					</div>
+					<div class="control-group" id="valuesControlGroup">
+						<label class="control-label">Replacements</label>
+						<div class="controls">
+							<textarea class="input-xxlarge" id="valuesJSON" style="min-height:75px">{
+	"placeholderName": 3,
+	"other": 45
+}</textarea>
+							<p class="help-block">Data to be inserted into the translation patterns. Provide valid JSON here.</p>
+							<div class="alert alert-error" id="errorAlert" style="display:none">
+								<strong id="errorType"> </strong>
+								<span id="errorMessage"> </span>
+							</div>
+						</div>
+				 	</div>
+					<div class="control-group">
+						<label class="control-label">Translations</label>
+						<div class="controls">
+							<table class="table table-striped">
+								<thead>
+									<tr><th>Translation Key</th><th>Translation pattern</th></tr>
+								</thead>
+								<tbody id="translationKeys"></tbody>
+							</table>
+							<p class="help-block">The keys that need to be provided in the translation files. Required keys depend on the replacements' values domains.</p>
+							<p class="help-block">
+								<span class="label label-info">So many?</span>
+								Multiple translation keys for a single source key are supported and required to get the details right by using the correct plural or gender for example. The number of translation keys required depends on the target language and value domains.
+							</p>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+			<blockquote>
+				<p id="translationResult">There goes the result.</p>
+				<small>Your input. Processed.</small>
+			</blockquote>
+			<script type="text/javascript">
+			translatables.translationMemory.updateTranslations("de_DE", {
+				"Pop it in the oven for {one(number(h))} hours and {one(number(other))} minute.": "Schieb es für {h} Stunde und {other} Minute in den Ofen.",
+				"Pop it in the oven for {one(number(h))} hours and {multiple(number(other))} minute.": "Schieb es für {h} Stunde und {other} Minuten in den Ofen.",
+				"Pop it in the oven for {multiple(number(h))} hours and {one(number(other))} minute.": "Schieb es für {h} Stunden und {other} Minute in den Ofen.",
+				"Pop it in the oven for {multiple(number(h))} hours and {multiple(number(other))} minute.": "Schieb es für {h} Stunden und {other} Minuten in den Ofen."
+			});
+			(function(){
+				var translation;
+				var sourceKey = document.getElementById("sourceKey");
+				var valuesControlGroup = document.getElementById("valuesControlGroup");
+				var valuesJSON = document.getElementById("valuesJSON");
+				var translationKeys = document.getElementById("translationKeys");
+				var translationResult = document.getElementById("translationResult");
+				function showError(e, controlGroup){
+					controlGroup.classList.add("error");
+					document.getElementById("errorAlert").style.display = "";
+					document.getElementById("errorType").firstChild.nodeValue = e.constructor.name;
+					document.getElementById("errorMessage").firstChild.nodeValue = e.message;
+				}
+				function hideError(){
+					Array.prototype.forEach.call(document.querySelectorAll(".error"), function(element){
+						element.classList.remove("error");
+					});
+					document.getElementById("errorAlert").style.display = "none";
+				}
+				function updateTranslationResult(){
+					try {
+						var values = JSON.parse(valuesJSON.value);
+						translationResult.firstChild.nodeValue = translation.translate(values);
+						hideError();
+					} catch(e) {
+						showError(e, valuesControlGroup);
+						return;
+					}
+				}
+				valuesJSON.onkeyup = updateTranslationResult;
+				function updateTranslationKeys(){
+					var language = translatables.translationMemory.getLanguage("de_DE");
+					try {
+						translation = new translatables.Translation(sourceKey.value, language);
+						hideError();
+					} catch(e){
+						showError(e, document.getElementById("sourceKeyControlGroup"));
+						return;
+					}
+					translationKeys.innerHTML = "";
+					var sampleIter = 0;
+					translation.getTranslationKeys().forEach(function(translationKey){
+						var tr = document.createElement("tr");
+						
+						var tdKey = document.createElement("td");
+						tdKey.appendChild(document.createTextNode(translationKey));
+						tr.appendChild(tdKey);
+						
+						var tdTranslation = document.createElement("td");
+						var input = document.createElement("input");
+						input.type = "text";
+						input.className = "input-xlarge";
+						input.style.width="350px";
+						var translatedString = translatables.translationMemory.getTranslation(language, translationKey);
+						if(translatedString===undefined){
+							translatedString = Object.keys(translation.placeholders).map(function(match){
+								sampleIter = sampleIter + 1;
+								return "sample"+sampleIter+" is {"+translation.placeholders[match].name+"}";
+							}).join(", ");
+						}
+						input.value = translatedString;
+						input.onkeyup = function(){
+							var newTranslation = {};
+							newTranslation[translationKey] = input.value;
+							translatables.translationMemory.updateTranslations(language.code, newTranslation);
+							updateTranslationResult();
+						};
+						tdTranslation.appendChild(input);
+						tr.appendChild(tdTranslation);
+						
+						translationKeys.appendChild(tr);
+						
+						if(typeof(translatables.translationMemory.getTranslation(language, translationKey))!=="string"){
+							var newTranslation = {};
+							newTranslation[translationKey] = input.value;
+							translatables.translationMemory.updateTranslations(language.code, newTranslation);
+						}
+					});
+					updateTranslationResult();
+				}
+				sourceKey.onkeyup = updateTranslationKeys;
+				updateTranslationKeys();
+			})();
+			</script>
+			
+			<h1>Background on language variety</h1>
+			<p>Different languages do have grammar that differs a lot. A lot of them change their words depending on the gender and cardinality of the things they describe. Since software authors are not always aware of the variety in which their produces must work tool support is required that exceeds simple string replacements.</p>
+			<p>Let's take for example a simple display of a time period and see a some variety. <a href="https://developer.mozilla.org/en-US/docs/Localization_and_Plurals">Mozilla</a> classifies laguages in no less than 17 families to get plurals right.</p>
+			<table class="table table-striped">
+				<thead>
+					<tr><th>Chinese (1 form)</th><th>English (2 forms)</th><th>French (2 forms, but other rules than English)</th><th>Polish (3 forms)</th></tr>
+				</thead>
+				<tbody>
+					<tr><td>0 時</td><td>0 hours</td><td>0 heure</td><td>0 godzin</td></tr>
+					<tr><td>1 時</td><td>1 hour</td><td>1 heure</td><td>1 godzina</td></tr>
+					<tr><td>2 時</td><td>2 hours</td><td>2 heures</td><td>2 godziny</td></tr>
+				</tbody>
+			</table>
+			<p>Languages do use up to 6 forms of plural plus modifications due to gender. It is thus too easy to forget about a translation in some language especially when multiple placeholders are contained in a single string. Taking into account the placeholders' domains allows for automatically generating all required translation keys.</p>
+			
+			<h1>Using the tool</h1>
+			<div class="alert">
+				<strong>Pre-alpha</strong>
+				This tool is in the very early stages of development. Do not use it for something else than experiments!
+			</div>
+			<p>To translate your own software request a translation whenever you need a translatable string.</p>
+			<pre>// Parses the source key
+var translation = new Translation("Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.", language);
+// Inserts the values into the correct translation
+translation.translate({
+	placeholderName: 3,
+	other: 45
+});</pre>
+			<p>The sentence from the example would result in 4 translations for English since each placeholder is a number and there are 2 forms of numbers in English. The polish translation file would need 9 translations since there are 3 forms of numbers.</p>
+			<h2>Language, Domain and Category objects</h2>
+			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages inluding locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
+			<p>The developer needs to provide the domain of each placeholder. As soon as the placeholders' values are known categories are calculated automatically in a language dependent manner.</p>
+			<p>The translator is provided with translation keys that include categories. Thus if the translator provides a translation for each translation key, the whole value domain can be covered.</p>
+			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
+			<h2>Extracting translations</h2>
+			<p>A node based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
+			<pre>node extract --language de_DE --discard-unused --codebase your-code.html</pre>
+			<p>The call would parse <code>index.html</code> for translatable strings and generate/update a JSON file with the translation keys for the German language.</p>
+			
+			<h1>About</h1>
+			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenace are guarenteed – so feel free to use it at your own risk.</p>
+		</div>
+	</body>
+</html>
