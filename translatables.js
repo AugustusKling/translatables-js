@@ -251,7 +251,11 @@
 		// Insert value in text provided by translator
 		var translation = translationMemory.getTranslation(this.language, outputPattern);
 		if(typeof(translation)!=="string"){
-			throw new Error("Translation for pattern missing: "+outputPattern);
+			// Insert values in source key to have at least something for missing translations. Should never be invoked if the extraction tool processed an application's code.
+			translation = this.source.replace(this.pattern, function(match){
+				var placeholder = placeholders[match];
+				return "{"+placeholder.name+"}";
+			});
 		}
 		return translation.replace(this.pattern, function(match){
 			var placeholder = placeholdersByName[match.substring(1, match.length-1)];
