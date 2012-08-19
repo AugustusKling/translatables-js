@@ -18,7 +18,8 @@
 					<legend>Instantly updating translation playground</legend>
 					<div class="alert alert-error" id="errorAlert" style="display:none">
 						<strong id="errorType"> </strong>
-						<span id="errorMessage"> </span>
+						<p id="errorMessage"> </p>
+						<button type="reset" class="btn btn-warning">Reset form</button>
 					</div>
 					<div class="control-group" id="sourceKeyControlGroup">
 						<label class="control-label">Source Key</label>
@@ -162,6 +163,13 @@
 				}
 				sourceKey.onkeyup = updateTranslationKeys;
 				updateTranslationKeys();
+				
+				document.querySelector("button[type=reset]").onclick = function(e){
+					// Resetting by method call to guarantee translations are actually updated after form reset
+					e.preventDefault();
+					document.querySelector("form").reset();
+					updateTranslationKeys();
+				};
 			})();
 			</script>
 			
