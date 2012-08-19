@@ -72,9 +72,16 @@
 	})();
 
 	function UnsupportedDomain(message){
-		this.message = message;
+		if(UnsupportedDomain.innercall===undefined){
+			UnsupportedDomain.innercall = true;
+			UnsupportedDomain.prototype = new Error(message);
+			UnsupportedDomain.prototype.name = "UnsupportedDomain";
+			UnsupportedDomain.prototype.constructor = UnsupportedDomain;
+			
+			return new UnsupportedDomain(message);
+		}
+		delete UnsupportedDomain.innercall;
 	}
-	UnsupportedDomain.prototype = new Error();
 
 	/**
 	* Encapsulates what is dependent on a culture.
@@ -149,9 +156,16 @@
 	};
 
 	function DomainMismatch(message){
-		this.message = message;
+		if(DomainMismatch.innercall===undefined){
+			DomainMismatch.innercall = true;
+			DomainMismatch.prototype = new Error(message);
+			DomainMismatch.prototype.name = "DomainMismatch";
+			DomainMismatch.prototype.constructor = DomainMismatch;
+			
+			return new DomainMismatch(message);
+		}
+		delete DomainMismatch.innercall;
 	}
-	DomainMismatch.prototype = new Error();
 
 	/**
 	* Type of values. Similar to classes in many programming languages.
@@ -295,19 +309,30 @@
 	};
 
 	// Initialize language support (happens here until language support gets too big for a single file)
+	var plainRule = new Domain("plain", String, [
+		new Category("plain", function(){return true;})
+	]);
+	// Number rules are based on https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
+	var numberRule1 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("multiple", function(value){
+			return !isNaN(value) && value!==1;
+		})
+	]);
+	var numberRule2 = new Domain("number", String, [
+		new Category("zeroone", function(value){
+			return value===0 || value===1;
+		}),
+		new Category("twoup", function(value){
+			return !isNaN(value) && value>1;
+		})
+	]);
 	translationMemory.registerLanguage(
 		new Language("de_DE", [
-			new Domain("number", String, [
-				new Category("one", function(value){
-					return value===1;
-				}),
-				new Category("multiple", function(value){
-					return !isNaN(value) && value!==1;
-				})
-			]),
-			new Domain("plain", String, [
-				new Category("plain", function(){return true;})
-			]),
+			numberRule1,
+			plainRule,
 			new Domain("gender", function(gender){
 				switch(gender){
 					case "male":
@@ -337,6 +362,81 @@
 			return date instanceof Date;
 		})
 	]));
+	
+	translationMemory.registerLanguage(
+		new Language("en", [
+			numberRule1,
+			plainRule,
+			new Domain("gender", function(gender){
+				switch(gender){
+					case "male":
+					case "female":
+						return gender;
+				}
+				return "unknown";
+			}, [
+				new Category("male", function(value){
+					return value==="male";
+				}),
+				new Category("female", function(value){
+					return value==="female";
+				}),
+				new Category("unknown", function(value){
+					return value!=="male" && value!=="female";
+				})
+			])
+		])
+	);
+	translationMemory.registerLanguage(
+		new Language("it", [
+			numberRule1,
+			plainRule,
+			new Domain("gender", function(gender){
+				switch(gender){
+					case "male":
+						return "maschile";
+					case "female":
+						return "femminile";
+				}
+				return "sconosciuto";
+			}, [
+				new Category("male", function(value){
+					return value==="male";
+				}),
+				new Category("female", function(value){
+					return value==="female";
+				}),
+				new Category("unknown", function(value){
+					return value!=="male" && value!=="female";
+				})
+			])
+		])
+	);
+	translationMemory.registerLanguage(
+		new Language("fr", [
+			numberRule1,
+			plainRule,
+			new Domain("gender", function(gender){
+				switch(gender){
+					case "male":
+						return "mâle";
+					case "female":
+						return "femelle";
+				}
+				return "inconnu";
+			}, [
+				new Category("male", function(value){
+					return value==="male";
+				}),
+				new Category("female", function(value){
+					return value==="female";
+				}),
+				new Category("unknown", function(value){
+					return value!=="male" && value!=="female";
+				})
+			])
+		])
+	);
 
 	var exportsHolder;
 	if(this.window===undefined){
