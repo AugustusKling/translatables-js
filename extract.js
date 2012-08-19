@@ -22,7 +22,7 @@ var extractedTranslations = {};
 var translationFilePath = program.language+".js";
 // Load existing translations
 if(path.existsSync(translationFilePath)){
-	JSON.parse(fs.readFileSync(translationFilePath).toString());
+	extractedTranslations = JSON.parse(fs.readFileSync(translationFilePath).toString());
 }
 
 // Parse code for translations
