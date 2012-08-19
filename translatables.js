@@ -67,7 +67,11 @@
 		* @return {string} Translated text (as proviced by translator where placeholders have not been substituted)
 		*/
 		this.getTranslation = function(language, translationKey){
-			return translations[language.code][translationKey];
+			var translation = translations[language.code][translationKey];
+			if(typeof(translation)!=="string" && language.fallbackLanguage instanceof Language){
+				return this.getTranslation(language.fallbackLanguage, translationKey);
+			}
+			return translation;
 		};
 	})();
 
@@ -118,7 +122,20 @@
 		if(domain instanceof Domain){
 			return domain;
 		}
+		if(this.fallbackLanguage instanceof Language){
+			return this.fallbackLanguage.getDomain(name);
+		}
 		throw new UnsupportedDomain(name+" is not a known domain for language "+this.code);
+	};
+	/**
+	 * Creates a new language that uses this language as fallback
+	 * @param {String} code
+	 * @return {Language}
+	 */
+	Language.prototype.extend = function(code){
+		var language = new Language(code, []);
+		language.fallbackLanguage = this;
+		return language;
 	};
 
 	/**
@@ -330,7 +347,7 @@
 		})
 	]);
 	translationMemory.registerLanguage(
-		new Language("de_DE", [
+		new Language("de", [
 			numberRule1,
 			plainRule,
 			new Domain("gender", function(gender){
@@ -354,8 +371,9 @@
 			])
 		])
 	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_DE"));
 	// Existing languages can also be extended for application specific domains
-	translationMemory.getLanguage("de_DE").updateDomain(new Domain("date", function(date){
+	translationMemory.getLanguage("de").updateDomain(new Domain("date", function(date){
 		return (date.getDate()+"."+date.getMonth()+"."+date.getFullYear()).replace(/\b(\d\.)/g, "0$1");
 	}, [
 		new Category("date", function(date){
