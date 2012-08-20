@@ -330,6 +330,11 @@
 		new Category("plain", function(){return true;})
 	]);
 	// Number rules are based on https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
+	var numberRule0 = new Domain("number", String, [
+		new Category("number", function(){
+			return true;
+		})
+	]);
 	var numberRule1 = new Domain("number", String, [
 		new Category("one", function(value){
 			return value===1;
@@ -344,6 +349,31 @@
 		}),
 		new Category("twoup", function(value){
 			return !isNaN(value) && value>1;
+		})
+	]);
+	var numberRule3 = new Domain("number", String, [
+		new Category("zero", function(value){
+			return value===0;
+		}),
+		new Category("lastDigitOne", function(value){
+			return value!==11 && /1$/.test(String(value));
+		}),
+		new Category("notEndsOne", function(value){
+			return value!==0 && (value===11 || /[234567890]$/.test(String(value)));
+		})
+	]);
+	var numberRule4 = new Domain("number", String, [
+		new Category("oneEleven", function(value){
+			return value===1 || value===11;
+		}),
+		new Category("twoTwelve", function(value){
+			return value===2 || value===12;
+		}),
+		new Category("threeUntilTwenty", function(value){
+			return [3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19].indexOf(value)>=0;
+		}),
+		new Category("twentyUp", function(value){
+			return value===0 || value>=20;
 		})
 	]);
 	translationMemory.registerLanguage(
@@ -371,6 +401,8 @@
 			])
 		])
 	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_AT"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_DE"));
 	// Existing languages can also be extended for application specific domains
 	translationMemory.getLanguage("de").updateDomain(new Domain("date", function(date){
@@ -405,6 +437,8 @@
 			])
 		])
 	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_UK"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_US"));
 	translationMemory.registerLanguage(
 		new Language("it", [
 			numberRule1,
@@ -430,6 +464,8 @@
 			])
 		])
 	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_CH"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_IT"));
 	translationMemory.registerLanguage(
 		new Language("fr", [
 			numberRule1,
@@ -455,6 +491,8 @@
 			])
 		])
 	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_CH"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_FR"));
 
 	var exportsHolder;
 	if(this.window===undefined){
