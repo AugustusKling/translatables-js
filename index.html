@@ -193,6 +193,16 @@
 				<strong>Pre-alpha</strong>
 				This tool is in the very early stages of development. Do not use it for something else than experiments!
 			</div>
+			<h2>Workflow &amp; Collaboration</h2>
+			<p>Initially, the software developer is required to encapsalate all places where a value is retrieved that requires translation. After that the developer needs to call the <i>extract</i> script to search the application's code for translatable values which results in a list ready to be supplied to a translator.</p>
+			<p>The translation needs to translate every translation key to the translated value whilst using the correct grammar for the given category of values. Once done the translator hands back the augmented file to the developer that ships it with the software.</p>
+			<p>During runtime the correct translation is automatically chosen based on the placeholder's values and provide to the software for display.</p>
+			<h2>Language, Domain and Category objects</h2>
+			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages including locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
+			<p>The developer needs to provide the domain of each placeholder. As soon as the placeholders' values are known categories are calculated automatically in a language dependent manner.</p>
+			<p>The translator is provided with translation keys that include categories. Thus if the translator provides a translation for each translation key, the whole value domain can be covered.</p>
+			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
+			<h2>Extracting translatable contents</h2>
 			<p>To translate your own software request a translation whenever you need a translatable string.</p>
 			<pre>// Create alias for translating to German as used in Germany
 var t = translatables.translationMemory.getAlias("de_DE");
@@ -202,18 +212,13 @@ var translation = t("Pop it in the oven for {number(placeholderName)} hours and 
 	other: 45
 });</pre>
 			<p>The sentence from the example would result in 4 translations for English since each placeholder is a number and there are 2 forms of numbers in English. The polish translation file would need 9 translations since there are 3 forms of numbers.</p>
-			<h2>Language, Domain and Category objects</h2>
-			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages including locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
-			<p>The developer needs to provide the domain of each placeholder. As soon as the placeholders' values are known categories are calculated automatically in a language dependent manner.</p>
-			<p>The translator is provided with translation keys that include categories. Thus if the translator provides a translation for each translation key, the whole value domain can be covered.</p>
-			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
-			<h2>Extracting translations</h2>
-			<p>A node based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
+			<p>A <a href="http://nodejs.org">node</a>  based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
 			<pre>node extract --language de_DE --codebase your/application/folder</pre>
 			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language. The generated file can then be amended by a translator.</p>
 			
 			<h1>About</h1>
 			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenance are guaranteed – so feel free to use it at your own risk.</p>
+			<p>Contributions in various forms and discussions are happily accepted.</p>
 		</div>
 	</body>
 </html>
