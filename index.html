@@ -203,7 +203,7 @@ var translation = t("Pop it in the oven for {number(placeholderName)} hours and 
 });</pre>
 			<p>The sentence from the example would result in 4 translations for English since each placeholder is a number and there are 2 forms of numbers in English. The polish translation file would need 9 translations since there are 3 forms of numbers.</p>
 			<h2>Language, Domain and Category objects</h2>
-			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages inluding locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
+			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages including locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
 			<p>The developer needs to provide the domain of each placeholder. As soon as the placeholders' values are known categories are calculated automatically in a language dependent manner.</p>
 			<p>The translator is provided with translation keys that include categories. Thus if the translator provides a translation for each translation key, the whole value domain can be covered.</p>
 			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
@@ -213,7 +213,7 @@ var translation = t("Pop it in the oven for {number(placeholderName)} hours and 
 			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language. The generated file can then be amended by a translator.</p>
 			
 			<h1>About</h1>
-			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenace are guarenteed – so feel free to use it at your own risk.</p>
+			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenance are guaranteed – so feel free to use it at your own risk.</p>
 		</div>
 	</body>
 </html>
