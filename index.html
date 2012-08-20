@@ -194,10 +194,10 @@
 				This tool is in the very early stages of development. Do not use it for something else than experiments!
 			</div>
 			<p>To translate your own software request a translation whenever you need a translatable string.</p>
-			<pre>// Parses the source key
-var translation = new Translation("Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.", language);
-// Inserts the values into the correct translation
-translation.translate({
+			<pre>// Create alias for translating to German as used in Germany
+var t = translatables.translationMemory.getAlias("de_DE");
+// Parse the source key and the values into the correct translation
+var translation = t("Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.", {
 	placeholderName: 3,
 	other: 45
 });</pre>
@@ -210,7 +210,7 @@ translation.translate({
 			<h2>Extracting translations</h2>
 			<p>A node based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
 			<pre>node extract --language de_DE --codebase your/application/folder</pre>
-			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language.</p>
+			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language. The generated file can then be amended by a translator.</p>
 			
 			<h1>About</h1>
 			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenace are guarenteed – so feel free to use it at your own risk.</p>
