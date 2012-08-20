@@ -10,6 +10,7 @@ program.version("0")
 	.option("--codebase <path>", "Root of program code (file or directory) to parse")
 	.option("--alias <name>", "Name of function that is used in the codebase to translate", String, "t")
 	.option("--language <language code>", "Language to generate")
+	.option("--language-folder <path>", "Folder in which translations are stored. Default is working directory.",  String, "./")
 	.option("--discard-unused", "Deletes no longer used translations")
 	.option("--discard-empty", "Deletes translation keys that point to empty translations")
 	.parse(process.argv);
@@ -19,7 +20,7 @@ var fs = require("fs");
 var path = require("path");
 
 var extractedTranslations = {};
-var translationFilePath = program.language+".js";
+var translationFilePath = program.languageFolder.replace(/([^/])$/, "$1/") + program.language+".js";
 // Load existing translations
 if(path.existsSync(translationFilePath)){
 	extractedTranslations = JSON.parse(fs.readFileSync(translationFilePath).toString());
@@ -67,4 +68,4 @@ Object.keys(extractedTranslations).forEach(function(sourceKey){
 });
 
 // Generate/update translations
-fs.writeFileSync(program.language+".js", JSON.stringify(extractedTranslations, null, "\t"));
+fs.writeFileSync(translationFilePath, JSON.stringify(extractedTranslations, null, "\t"));
