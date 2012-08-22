@@ -99,6 +99,7 @@
 	/**
 	 * Adds or updates a domain
 	 * @param {Domain} domain
+	 * @return {Language}
 	 */
 	Language.prototype.updateDomain = function(domain){
 		for(var i=0; i<this.domains.length; i++){
@@ -107,6 +108,8 @@
 			}
 		}
 		this.domains[i] = domain;
+		
+		return this;
 	};
 	/**
 	* @param {string} name A domain name
@@ -214,6 +217,32 @@
 	Domain.prototype.format = function(value){
 		return this.formatter(value);
 	}
+	/**
+	 * Creates a domain based on enumerated category values. For enumerable value domains only.
+	 * @param {string} name
+	 * @param {string} categoryNames Names and values of category. The same because each category has excatly one value
+	 * @param {string} catchAllValue Category and representation to use in case no category matches
+	 * @return {Domain}
+	 */
+	Domain.createByCategoryChecks = function(name, categoryNames, catchAllValue){
+		var categories = categoryNames.map(function(categoryName){
+			return new Category(categoryName, function(value){
+				return value===categoryName;
+			});
+		});
+		var isCatchAll = function(value){
+			return categoryNames.indexOf(value)===-1;
+		};
+		if(catchAllValue!==undefined){
+			categories.push(new Category(catchAllValue, isCatchAll));
+		}
+		return new Domain(name, function(value){
+			if(isCatchAll(value)){
+				return catchAllValue;
+			}
+			return String(value);
+		}, categories);
+	};
 
 	/**
 	* Covers values that a language threads in the same way.
@@ -377,9 +406,19 @@
 		})
 	]);
 	translationMemory.registerLanguage(
-		new Language("de", [
-			numberRule1,
+		/**
+		 * Base language with domains to be overridden.
+		 */
+		new Language("root", [
 			plainRule,
+			numberRule0,
+			Domain.createByCategoryChecks("gender", ["♂", "♀"], "⚪")
+		])
+	);
+	translationMemory.registerLanguage(
+		translationMemory.getLanguage("root").extend("de")
+		.updateDomain(numberRule1)
+		.updateDomain(
 			new Domain("gender", function(gender){
 				switch(gender){
 					case "male":
@@ -399,7 +438,7 @@
 					return value!=="male" && value!=="female";
 				})
 			])
-		])
+		)
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_AT"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("de").extend("de_CH"));
@@ -414,9 +453,9 @@
 	]));
 	
 	translationMemory.registerLanguage(
-		new Language("en", [
-			numberRule1,
-			plainRule,
+		translationMemory.getLanguage("root").extend("en")
+		.updateDomain(numberRule1)
+		.updateDomain(
 			new Domain("gender", function(gender){
 				switch(gender){
 					case "male":
@@ -435,14 +474,14 @@
 					return value!=="male" && value!=="female";
 				})
 			])
-		])
+		)
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_UK"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_US"));
 	translationMemory.registerLanguage(
-		new Language("it", [
-			numberRule1,
-			plainRule,
+		translationMemory.getLanguage("root").extend("it")
+		.updateDomain(numberRule1)
+		.updateDomain(
 			new Domain("gender", function(gender){
 				switch(gender){
 					case "male":
@@ -462,14 +501,15 @@
 					return value!=="male" && value!=="female";
 				})
 			])
-		])
+		)
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_IT"));
 	translationMemory.registerLanguage(
-		new Language("fr", [
-			numberRule1,
-			plainRule,
+		translationMemory.getLanguage("root").extend("fr")
+		.updateDomain(numberRule2)
+		.updateDomain(plainRule)
+		.updateDomain(
 			new Domain("gender", function(gender){
 				switch(gender){
 					case "male":
@@ -489,7 +529,7 @@
 					return value!=="male" && value!=="female";
 				})
 			])
-		])
+		)
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_FR"));
