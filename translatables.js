@@ -360,7 +360,7 @@
 	]);
 	// Number rules are based on https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
 	var numberRule0 = new Domain("number", String, [
-		new Category("number", function(value){
+		new Category("any", function(value){
 			return !isNaN(value);
 		})
 	]);
@@ -368,15 +368,15 @@
 		new Category("one", function(value){
 			return value===1;
 		}),
-		new Category("multiple", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value) && value!==1;
 		})
 	]);
 	var numberRule2 = new Domain("number", String, [
-		new Category("zeroone", function(value){
+		new Category("zero", function(value){
 			return value===0 || value===1;
 		}),
-		new Category("twoup", function(value){
+		new Category("two", function(value){
 			return !isNaN(value) && value>1;
 		})
 	]);
@@ -384,24 +384,24 @@
 		new Category("zero", function(value){
 			return value===0;
 		}),
-		new Category("lastDigitOne", function(value){
+		new Category("one", function(value){
 			return value!==11 && /1$/.test(String(value));
 		}),
-		new Category("notEndsOne", function(value){
+		new Category("two", function(value){
 			return value!==0 && (value===11 || /[234567890]$/.test(String(value)));
 		})
 	]);
 	var numberRule4 = new Domain("number", String, [
-		new Category("oneEleven", function(value){
+		new Category("one", function(value){
 			return value===1 || value===11;
 		}),
-		new Category("twoTwelve", function(value){
+		new Category("two", function(value){
 			return value===2 || value===12;
 		}),
-		new Category("threeUntilTwenty", function(value){
+		new Category("three", function(value){
 			return [3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19].indexOf(value)>=0;
 		}),
-		new Category("twentyUp", function(value){
+		new Category("zero", function(value){
 			return value===0 || value>=20;
 		})
 	]);
@@ -409,32 +409,32 @@
 		new Category("one", function(value){
 			return value===1;
 		}),
-		new Category("endsBelowTwenty", function(value){
+		new Category("zero", function(value){
 			return value!==1 && (value<20 || /01$/.test(value) || /1\d$/.test(value));
 		}),
-		new Category("endsTwentyOver", function(value){
+		new Category("twenty", function(value){
 			return !isNaN(value);
 		})
 	]);
 	var numberRule6 = new Domain("number", String, [
-		new Category("endsOne", function(value){
+		new Category("one", function(value){
 			return value!==11 && /1$/.test(value);
 		}),
-		new Category("endsBelowTwenty", function(value){
+		new Category("zero", function(value){
 			return /0$/.test(value) || /1[123456789]$/.test(value);
 		}),
-		new Category("else", function(value){
+		new Category("two", function(value){
 			return !isNaN(value);
 		})
 	]);
 	var numberRule7 = new Domain("number", String, [
-		new Category("endsOne", function(value){
+		new Category("one", function(value){
 			return value!==11 && /1$/.test(value);
 		}),
-		new Category("endsTwoToFour", function(value){
+		new Category("two", function(value){
 			return [12, 13, 14].indexOf(value)===-1 && /[234]$/.test(value);
 		}),
-		new Category("else", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value);
 		})
 	]);
@@ -442,10 +442,10 @@
 		new Category("one", function(value){
 			return value===1;
 		}),
-		new Category("twoThreeFour", function(value){
+		new Category("two", function(value){
 			return [2, 3, 4].indexOf(value)>=0;
 		}),
-		new Category("else", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value);
 		})
 	]);
@@ -453,24 +453,24 @@
 		new Category("one", function(value){
 			return value===1;
 		}),
-		new Category("endsTwoToFour", function(value){
+		new Category("two", function(value){
 			return [12, 13, 14].indexOf(value)===-1 && /[234]$/.test(value);
 		}),
-		new Category("else", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value);
 		})
 	]);
 	var numberRule10 = new Domain("number", String, [
-		new Category("endsZeroOne", function(value){
+		new Category("one", function(value){
 			return value===1 || /01$/.test(value);
 		}),
-		new Category("endsZeroTwo", function(value){
+		new Category("two", function(value){
 			return value===2 || /02$/.test(value);
 		}),
-		new Category("endsZeroThreeOrFour", function(value){
+		new Category("three", function(value){
 			return value===3 || value===4 || /03$/.test(value) || /04$/.test(value);
 		}),
-		new Category("else", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value);
 		})
 	]);
@@ -481,13 +481,13 @@
 		new Category("two", function(value){
 			return value===2;
 		}),
-		new Category("threeToSix", function(value){
+		new Category("three", function(value){
 			return [3, 4, 5, 6].indexOf(value)>=0;
 		}),
-		new Category("sevenToTen", function(value){
+		new Category("seven", function(value){
 			return [7, 8, 9, 10].indexOf(value)>=0;
 		}),
-		new Category("else", function(value){
+		new Category("zero", function(value){
 			return !isNaN(value);
 		})
 	]);
@@ -501,10 +501,10 @@
 		new Category("two", function(value){
 			return value===2;
 		}),
-		new Category("endsZeroThreeToTen", function(value){
+		new Category("three", function(value){
 			return [3, 4, 5, 6, 7, 8, 9].indexOf(value)>=0 || /10$/.test(value);
 		}),
-		new Category("endsZeroBelowThree", function(value){
+		new Category("eleven", function(value){
 			return /00$/.test(value) || /01$/.test(value) || /02$/.test(value);
 		}),
 		new Category("else", function(value){
@@ -692,9 +692,9 @@
 	
 	translationMemory.registerLanguage(
 		translationMemory.getLanguage("root").extend("gd")
-		.updateDomain(numberRule11)
 	);
-	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_IR"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_SCO").updateDomain(numberRule4));
+	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_IR").updateDomain(numberRule11));
 
 	var exportsHolder;
 	if(this.window===undefined){
