@@ -191,7 +191,7 @@
 	* Type of values. Similar to classes in many programming languages.
 	* @param {string} name Type name
 	* @param {function(*):string} formatter Conversion function that transforms any value in a domain to a textual representation
-	* @param {Array.<Category>} categories Classification that the language uses to thread values
+	* @param {Array.<Category>} categories Classification that the language uses to thread values. Categories are queried in sequence to check if they are covering the provided value.
 	*/
 	function Domain(name, formatter, categories){
 		this.name = name;
@@ -360,8 +360,8 @@
 	]);
 	// Number rules are based on https://developer.mozilla.org/en-US/docs/Localization_and_Plurals
 	var numberRule0 = new Domain("number", String, [
-		new Category("number", function(){
-			return true;
+		new Category("number", function(value){
+			return !isNaN(value);
 		})
 	]);
 	var numberRule1 = new Domain("number", String, [
@@ -403,6 +403,163 @@
 		}),
 		new Category("twentyUp", function(value){
 			return value===0 || value>=20;
+		})
+	]);
+	var numberRule5 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("endsBelowTwenty", function(value){
+			return value!==1 && (value<20 || /01$/.test(value) || /1\d$/.test(value));
+		}),
+		new Category("endsTwentyOver", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule6 = new Domain("number", String, [
+		new Category("endsOne", function(value){
+			return value!==11 && /1$/.test(value);
+		}),
+		new Category("endsBelowTwenty", function(value){
+			return /0$/.test(value) || /1[123456789]$/.test(value);
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule7 = new Domain("number", String, [
+		new Category("endsOne", function(value){
+			return value!==11 && /1$/.test(value);
+		}),
+		new Category("endsTwoToFour", function(value){
+			return [12, 13, 14].indexOf(value)===-1 && /[234]$/.test(value);
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule8 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("twoThreeFour", function(value){
+			return [2, 3, 4].indexOf(value)>=0;
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule9 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("endsTwoToFour", function(value){
+			return [12, 13, 14].indexOf(value)===-1 && /[234]$/.test(value);
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule10 = new Domain("number", String, [
+		new Category("endsZeroOne", function(value){
+			return value===1 || /01$/.test(value);
+		}),
+		new Category("endsZeroTwo", function(value){
+			return value===2 || /02$/.test(value);
+		}),
+		new Category("endsZeroThreeOrFour", function(value){
+			return value===3 || value===4 || /03$/.test(value) || /04$/.test(value);
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule11 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("two", function(value){
+			return value===2;
+		}),
+		new Category("threeToSix", function(value){
+			return [3, 4, 5, 6].indexOf(value)>=0;
+		}),
+		new Category("sevenToTen", function(value){
+			return [7, 8, 9, 10].indexOf(value)>=0;
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule12 = new Domain("number", String, [
+		new Category("zero", function(value){
+			return value===0;
+		}),
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("two", function(value){
+			return value===2;
+		}),
+		new Category("endsZeroThreeToTen", function(value){
+			return [3, 4, 5, 6, 7, 8, 9].indexOf(value)>=0 || /10$/.test(value);
+		}),
+		new Category("endsZeroBelowThree", function(value){
+			return /00$/.test(value) || /01$/.test(value) || /02$/.test(value);
+		}),
+		new Category("else", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule13 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value===1;
+		}),
+		new Category("zero", function(value){
+			return [0, 2, 3, 4, 5, 6, 7, 8, 9].indexOf(value)>=0 || /0\d$/.test(value) || /10$/.test(value);
+		}),
+		new Category("eleven", function(value){
+			return /1\d$/.test(value);
+		}),
+		new Category("twenty", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule14 = new Domain("number", String, [
+		new Category("one", function(value){
+			return /1$/.test(value);
+		}),
+		new Category("two", function(value){
+			return /2$/.test(value);
+		}),
+		new Category("zero", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule15 = new Domain("number", String, [
+		new Category("one", function(value){
+			return value!==11 && /1$/.test(value);
+		}),
+		new Category("zero", function(value){
+			return !isNaN(value);
+		})
+	]);
+	var numberRule16 = new Domain("number", String, [
+		new Category("one", function(value){
+			return /1$/.test(value) && [11, 71, 91].indexOf(value)===-1;
+		}),
+		new Category("two", function(value){
+			return /2$/.test(value) && [12, 72, 92].indexOf(value)===-1;
+		}),
+		new Category("three", function(value){
+			return (/3$/.test(value) || /4$/.test(value) || /9$/.test(value)) && [13, 14, 19, 73, 74, 79, 93, 94, 99].indexOf(value)===-1;
+		}),
+		// Verify this category exists
+		new Category("million", function(value){
+			return /000000$/.test(value);
+		}),
+		new Category("zero", function(value){
+			return !isNaN(value);
 		})
 	]);
 	translationMemory.registerLanguage(
@@ -508,7 +665,6 @@
 	translationMemory.registerLanguage(
 		translationMemory.getLanguage("root").extend("fr")
 		.updateDomain(numberRule2)
-		.updateDomain(plainRule)
 		.updateDomain(
 			new Domain("gender", function(gender){
 				switch(gender){
@@ -533,6 +689,12 @@
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_FR"));
+	
+	translationMemory.registerLanguage(
+		translationMemory.getLanguage("root").extend("gd")
+		.updateDomain(numberRule11)
+	);
+	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_IR"));
 
 	var exportsHolder;
 	if(this.window===undefined){
