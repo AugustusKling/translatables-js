@@ -569,7 +569,14 @@
 		new Language("root", [
 			plainRule,
 			numberRule0,
-			Domain.createByCategoryChecks("gender", ["♂", "♀"], "⚪")
+			Domain.createByCategoryChecks("gender", ["♂", "♀"], "⚪"),
+			new Domain("date", function(date){
+				return (date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()).replace(/\b(\d)\b/g, "0$1");
+			}, [
+				new Category("date", function(date){
+					return date instanceof Date;
+				})
+			])
 		])
 	);
 	translationMemory.registerLanguage(

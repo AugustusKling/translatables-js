@@ -54,3 +54,11 @@ exports["Category mismatches refused"] = function(test){
 	});
 	test.done();
 };
+
+exports["Dates supported"] = function(test){
+	var translatedOfLastYearsWeek = this.t("{date(value)}", {
+		value: new Date(2010, 0, 2)
+	});
+	test.equal(translatedOfLastYearsWeek, "2010-01-02");
+	test.done();
+};
