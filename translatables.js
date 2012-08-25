@@ -640,8 +640,16 @@
 			])
 		)
 	);
-	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_UK"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_GB"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("en_GB").extend("en_SCO"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("en").extend("en_US"));
+	
+	// Spanish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("es").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("es_ES"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("es_PE"));
+	
+	// Italian
 	translationMemory.registerLanguage(
 		translationMemory.getLanguage("root").extend("it")
 		.updateDomain(numberRule1)
@@ -669,6 +677,8 @@
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("it").extend("it_IT"));
+	
+	// French
 	translationMemory.registerLanguage(
 		translationMemory.getLanguage("root").extend("fr")
 		.updateDomain(numberRule2)
@@ -696,12 +706,108 @@
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_CH"));
 	translationMemory.registerLanguage(translationMemory.getLanguage("fr").extend("fr_FR"));
+
+	// Japaneses
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("jp").updateDomain(numberRule0));
+	translationMemory.registerLanguage(translationMemory.getLanguage("jp").extend("jp_JP"));
+
+	// Korean
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("ko").updateDomain(numberRule0));
+	translationMemory.registerLanguage(translationMemory.getLanguage("ko").extend("ko_KR"));
 	
+	// Portugese
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("pt").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("pt").extend("pt_PT"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("pt").extend("pt_BR").updateDomain(numberRule2));
+
+	// Chinese
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("zh").updateDomain(numberRule0));
+	translationMemory.registerLanguage(translationMemory.getLanguage("zh").extend("zh_CN"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("zh").extend("zh_TW"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("zh").extend("zh_HK"));
+	
+	// Polish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("pl").updateDomain(numberRule9));
+	translationMemory.registerLanguage(translationMemory.getLanguage("pl").extend("pl_PL"));
+
+	// Romanian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("ro").updateDomain(numberRule5));
+	translationMemory.registerLanguage(translationMemory.getLanguage("ro").extend("ro_RO"));
+	
+	// Russian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("ru").updateDomain(numberRule7));
+	translationMemory.registerLanguage(translationMemory.getLanguage("ru").extend("ru_RU"));
+	
+	// Arabic
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("ar").updateDomain(numberRule12));
+	
+	// Croatian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("hr").updateDomain(numberRule7));
+	
+	// Czech
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("cs").updateDomain(numberRule8));
+	translationMemory.registerLanguage(translationMemory.getLanguage("cs").extend("cs_CZ"));
+	
+	// Danish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("da").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("da").extend("da_DK"));
+	
+	// Dutch
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("nl").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("nl").extend("nl_NL"));
+	
+	// Esperanto
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("eo"));
+	
+	// Estonian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("et").updateDomain(numberRule1));
+	
+	// Finnish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("fi"));
+	
+	// Greek
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("el").updateDomain(numberRule1));
+	
+	// Hebrew
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("he").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("he").extend("he_IL"));
+	
+	// Hindi
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("hi"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("hi_IN"));
+	
+	// Hungarian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("hu").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("hu").extend("hu_HU"));
+	
+	// Indonesian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("id"));
+	translationMemory.registerLanguage(translationMemory.getLanguage("id").extend("id_ID"));
+	
+	// Persian
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("fa").updateDomain(numberRule0));
+	translationMemory.registerLanguage(translationMemory.getLanguage("fa").extend("fa_IR"));
+
+	// Galic, Irish
 	translationMemory.registerLanguage(
 		translationMemory.getLanguage("root").extend("gd")
 	);
 	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_SCO").updateDomain(numberRule4));
 	translationMemory.registerLanguage(translationMemory.getLanguage("gd").extend("gd_IR").updateDomain(numberRule11));
+	
+	// Swedish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("sv").updateDomain(numberRule1));
+	translationMemory.registerLanguage(translationMemory.getLanguage("sv").extend("sv_SE"));
+	
+	// Turkish
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("tr").updateDomain(numberRule0));
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("tr_TR"));
+	
+	// Vietnamese
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("vi").updateDomain(numberRule0));
+	
+	// Welsh
+	translationMemory.registerLanguage(translationMemory.getLanguage("root").extend("cy"));
 
 	var exportsHolder;
 	if(this.window===undefined){
