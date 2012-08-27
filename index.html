@@ -61,6 +61,19 @@
 						</div>
 				 	</div>
 					<div class="control-group">
+						<label class="control-label">Target Language</label>
+						<div class="controls">
+							<div class="btn-group" id="targetLanguages">
+								<button class="btn" data-lang="vi">Vietnamese</button>
+								<button class="btn active" data-lang="de_DE">German</button>
+								<button class="btn" data-lang="fr_FR">French</button>
+								<button class="btn" style="border-bottom-right-radius: 4px; border-top-right-radius: 4px;" data-lang="gd_SCO">Scottish Gaelic</button>
+								<span class="help-inline" style="padding:5px;">plus many others.</span>
+							</div>
+							<p class="help-block">Choose the language rules that shall be used to generate the translation keys.</p>
+						</div>
+					</div>
+					<div class="control-group">
 						<label class="control-label">Translations</label>
 						<div class="controls">
 							<table class="table table-striped">
@@ -100,6 +113,22 @@
 				var translationKeys = document.getElementById("translationKeys");
 				var translationResult = document.getElementById("translationResult");
 				var language = translatables.translationMemory.getLanguage("de_DE");
+				
+				// Update translation keys and translation whenever language is switched
+				var allLanguageButtons = document.getElementById("targetLanguages").getElementsByTagName("button");
+				Array.prototype.forEach.call(allLanguageButtons, function(languageButton){
+					languageButton.onclick = function(e){
+						e.preventDefault();
+						
+						Array.prototype.forEach.call(allLanguageButtons, function(someLanguageButton){
+							someLanguageButton.classList.remove("active");
+						});
+						this.classList.add("active");
+						language = translatables.translationMemory.getLanguage(this.dataset.lang);
+						updateTranslationKeys();
+					};
+				});
+				
 				function showError(e, controlGroup){
 					controlGroup.classList.add("error");
 					document.getElementById("errorAlert").style.display = "";
@@ -228,6 +257,7 @@
 			<p>To translate your own software request a translation whenever you need a translatable string.</p>
 			<pre>// Create alias for translating to German as used in Germany
 var t = translatables.translationMemory.getAlias("de_DE");
+
 // Parse the source key and the values into the correct translation
 var translation = t("Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.", {
 	placeholderName: 3,
