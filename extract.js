@@ -28,13 +28,46 @@ if(path.existsSync(translationFilePath)){
 
 // Parse code for translations
 var translationKeysPresent = [];
-var pattern = new RegExp("\\b"+program.alias+"\\(((?:\"[^\"]*)|(?:'[^']*))", "g");
 function addSourceKeyFromFile(path){
 	var content = fs.readFileSync(path).toString();
-	var match;
-	while(match = pattern.exec(content)){
+	
+	var sourceKeys = [];
+	var parts = content.split(/(?=")/);
+	var isCollecting = false;
+	var combine = false;
+	var lastPart = null;
+	var translationFunctionPattern = new RegExp(".*\\b"+program.alias.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")+"\\s*\\(\\s*$");
+	for(var i=0; i<parts.length; i++){
+		var part = parts[i];
+		var isTranslationKey = isTranslationKey || translationFunctionPattern.test(lastPart);
+		if(/^"/.test(part) && !isCollecting){
+			isCollecting = true;
+			if(isTranslationKey){
+				if(combine){
+					sourceKeys.push(sourceKeys.pop()+"\""+part.substr(1));
+				} else {
+					sourceKeys.push(part.substr(1));
+				}
+			}
+			if(/\\$/.test(part)){
+				isCollecting = false;
+				combine = true;
+			} else {
+				combine = false;
+			}
+		} else {
+			isCollecting = false;
+			combine = false;
+			isTranslationKey = false;
+		}
+		lastPart = part;
+	}
+	sourceKeys = sourceKeys.map(function(sourceKey){
+		return sourceKey.replace(/\\(.)/g, "$1");
+	});
+	
+	sourceKeys.forEach(function(sourceKey){
 		// Add translation keys for each source key
-		var sourceKey = match[1].substring(1);
 		var translation = new translatables.Translation(sourceKey, translatables.translationMemory.getLanguage(program.language));
 		translation.getTranslationKeys().forEach(function(translationKey){
 			translationKeysPresent.push(translationKey);
@@ -42,7 +75,7 @@ function addSourceKeyFromFile(path){
 				extractedTranslations[translationKey] = "";
 			}
 		});
-	}
+	});
 }
 function parseDirectory(path){
 	var stats = fs.statSync(path);
