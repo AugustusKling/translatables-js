@@ -31,40 +31,49 @@ var translationKeysPresent = [];
 function addSourceKeyFromFile(path){
 	var content = fs.readFileSync(path).toString();
 	
-	var sourceKeys = [];
-	var parts = content.split(/(?=")/);
-	var isCollecting = false;
-	var combine = false;
-	var lastPart = null;
-	var translationFunctionPattern = new RegExp(".*\\b"+program.alias.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")+"\\s*\\(\\s*$");
-	for(var i=0; i<parts.length; i++){
-		var part = parts[i];
-		var isTranslationKey = isTranslationKey || translationFunctionPattern.test(lastPart);
-		if(/^"/.test(part) && !isCollecting){
-			isCollecting = true;
-			if(isTranslationKey){
-				if(combine){
-					sourceKeys.push(sourceKeys.pop()+"\""+part.substr(1));
-				} else {
-					sourceKeys.push(part.substr(1));
+	/**
+	 * Extracts translatable strings
+	 * @param {string} content Text to be searched for translation strings
+	 * @param {string} delimiter Character that delimits string. Usually apostroph or quote.
+	 * @return {Array.<string>} List of source keys
+	 */
+	function extractStrings(content, delimiter){
+		var sourceKeys = [];
+		var parts = content.split(new RegExp("(?="+delimiter+")"));
+		var isCollecting = false;
+		var combine = false;
+		var lastPart = null;
+		var translationFunctionPattern = new RegExp(".*\\b"+program.alias.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")+"\\s*\\(\\s*$");
+		for(var i=0; i<parts.length; i++){
+			var part = parts[i];
+			var isTranslationKey = isTranslationKey || translationFunctionPattern.test(lastPart);
+			if(new RegExp("^"+delimiter).test(part) && !isCollecting){
+				isCollecting = true;
+				if(isTranslationKey){
+					if(combine){
+						sourceKeys.push(sourceKeys.pop()+delimiter+part.substr(1));
+					} else {
+						sourceKeys.push(part.substr(1));
+					}
 				}
-			}
-			if(/\\$/.test(part)){
-				isCollecting = false;
-				combine = true;
+				if(/\\$/.test(part)){
+					isCollecting = false;
+					combine = true;
+				} else {
+					combine = false;
+				}
 			} else {
+				isCollecting = false;
 				combine = false;
+				isTranslationKey = false;
 			}
-		} else {
-			isCollecting = false;
-			combine = false;
-			isTranslationKey = false;
+			lastPart = part;
 		}
-		lastPart = part;
+		return sourceKeys.map(function(sourceKey){
+			return sourceKey.replace(/\\(.)/g, "$1");
+		});
 	}
-	sourceKeys = sourceKeys.map(function(sourceKey){
-		return sourceKey.replace(/\\(.)/g, "$1");
-	});
+	var sourceKeys = extractStrings(content, "\"").concat(extractStrings(content, "'"));
 	
 	sourceKeys.forEach(function(sourceKey){
 		// Add translation keys for each source key
