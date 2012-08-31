@@ -5,7 +5,28 @@
 		<meta charset='utf-8'>
 		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 		<script type="text/javascript" src="translatables.js"></script>
-		<style type="text/css">.whitespace-cells .span6{padding-bottom:1em;}</style>
+		<style type="text/css">
+		.whitespace-cells .span6{padding-bottom:1em;}
+		.code-comment {color: darkgray;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white, 0 0 0 black;
+    font-family: sans-serif;}
+    .code-placeholder {color: darkgray;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white, 0 0 0 black;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 0 3px 0 #DDDDDD;}
+    @media (min-width:1200px) and (max-width: 1440px){
+			body > div.container {float:right;padding-right:20px}
+    }
+    @media (min-width: 1200px) {
+			#navigation-links {margin-left: -220px;
+    margin-top: 17px;
+    padding: 8px 0;
+    position: fixed;
+    width: 200px;}}
+    @media (max-width: 1200px){
+			#navigation-links {margin-top:8px;}}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -13,8 +34,23 @@
 				<h1>Domain aware translations
 					<small>Mastering language variety in software translations</small>
 				</h1>
+				<div id="navigation-links" class="well" style="padding: 8px 0;margin-bottom:0"><ul class="nav nav-list">
+				<li class="nav-header">Domain aware translations</li>
+				<li><a href="#advantages">Advantages</a></li>
+				<li><a href="#instantly-updating-translation-playground">Instantly updating playground</a></li>
+				<li class="nav-header">Learn more</li>
+				<li><a href="#background-on-language-variety">Language variety</a></li>
+				<li><a href="#using-the-tool">Using the tool</a></li>
+				<li><a href="#workflow-collaboration">Workflow &amp; Collaboration</a></li>
+				<li><a href="#language-domain-and-category-objects">Language, Domain and Category objects</a></li>
+				<li><a href="#extracting-translatable-contents">Extracting translations</a></li>
+				<li><a href="#extending-with-languages-and-domains">Extension points</a></li>
+				<li class="divider"></li>
+				<li><a href="#download">Download</a></li>
+				<li><a href="#about">About</a></li>
+				</ul></div>
 			</div>
-			<div class="row whitespace-cells">
+			<div class="row whitespace-cells" id="advantages">
 				<div class="span6">
 					<h3>For developers</h3>
 					<ul>
@@ -37,7 +73,7 @@
 			</div>
 			<form class="form-horizontal well">
 				<fieldset>
-					<legend>Instantly updating translation playground</legend>
+					<legend id="instantly-updating-translation-playground">Instantly updating translation playground</legend>
 					<div class="alert alert-error" id="errorAlert" style="display:none">
 						<strong id="errorType"> </strong>
 						<p id="errorMessage"> </p>
@@ -224,7 +260,7 @@
 			})();
 			</script>
 			
-			<h1>Background on language variety</h1>
+			<h1 id="background-on-language-variety">Background on language variety</h1>
 			<p>Different languages do have grammar that differs a lot. A lot of them change their words depending on the gender and cardinality of the things they describe. Since software authors are not always aware of the variety in which their produces must work tool support is required that exceeds simple string replacements.</p>
 			<p>Let's take for example a simple display of a time period and see a some variety. <a href="https://developer.mozilla.org/en-US/docs/Localization_and_Plurals">Mozilla</a> classifies laguages in no less than 17 families to get plurals right.</p>
 			<table class="table table-striped">
@@ -239,26 +275,27 @@
 			</table>
 			<p>Languages do use up to 6 forms of plural plus modifications due to gender. It is thus too easy to forget about a translation in some language especially when multiple placeholders are contained in a single string. Taking into account the placeholders' domains allows for automatically generating all required translation keys.</p>
 			
-			<h1>Using the tool</h1>
-			<div class="alert">
-				<strong>Pre-alpha</strong>
-				This tool is in the very early stages of development. Do not use it for something else than experiments!
+			<h1 id="using-the-tool">Using the tool</h1>
+			<div class="alert" style="margin-top:8px">
+				<strong>Not production-ready</strong>
+				Despite this tool should be complete in features it did not yet undergo excessive testing.<br/>
+				Do not use it for something else than experiments!
 			</div>
-			<h2>Workflow &amp; Collaboration</h2>
+			<h2 id="workflow-collaboration">Workflow &amp; Collaboration</h2>
 			<p>Initially, the software developer is required to encapsalate all places where a value is retrieved that requires translation. After that the developer needs to call the <i>extract</i> script to search the application's code for translatable values which results in a list ready to be supplied to a translator.</p>
 			<p>The translation needs to translate every translation key to the translated value whilst using the correct grammar for the given category of values. Once done the translator hands back the augmented file to the developer that ships it with the software.</p>
 			<p>During runtime the correct translation is automatically chosen based on the placeholder's values and provide to the software for display.</p>
-			<h2>Language, Domain and Category objects</h2>
-			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages including locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4,</p>
+			<h2 id="language-domain-and-category-objects">Language, Domain and Category objects</h2>
+			<p>In order to implement all required rules a nested structure of languages, domains and categories is used. Languages represent languages including locales such as Austrian German. Domains are value domains such as numbers, plain texts, genders or dates. Further below there are categories like all numbers where the last digit is 2, 3 or 4.</p>
 			<p>The developer needs to provide the domain of each placeholder. As soon as the placeholders' values are known categories are calculated automatically in a language dependent manner.</p>
 			<p>The translator is provided with translation keys that include categories. Thus if the translator provides a translation for each translation key, the whole value domain can be covered.</p>
 			<p>In other words the developer provides the domains, the translation keys are automatically generated and translator is fine to simply translate examples.</p>
-			<h2>Extracting translatable contents</h2>
+			<h2 id="extracting-translatable-contents">Extracting translatable contents</h2>
 			<p>To translate your own software request a translation whenever you need a translatable string.</p>
-			<pre>// Create alias for translating to German as used in Germany
+			<pre><span class="code-comment">// Create alias for translating to German as used in Germany</span>
 var t = translatables.translationMemory.getAlias("de_DE");
 
-// Parse the source key and the values into the correct translation
+<span class="code-comment">// Parse the source key and the values into the correct translation</span>
 var translation = t("Pop it in the oven for {number(placeholderName)} hours and {number(other)} minutes.", {
 	placeholderName: 3,
 	other: 45
@@ -266,11 +303,51 @@ var translation = t("Pop it in the oven for {number(placeholderName)} hours and 
 			<p>The sentence from the example would result in 4 translations for English since each placeholder is a number and there are 2 forms of numbers in English. The polish translation file would need 9 translations since there are 3 forms of numbers.</p>
 			<p>A <a href="http://nodejs.org">node</a>  based tool is provided to look for new source keys and to merge them with your existing translations. The script is also able to discard translations that are no longer required.</p>
 			<pre>node extract --language de_DE --codebase your/application/folder</pre>
-			<p>The call would parse all files in<code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language. The generated file can then be amended by a translator.</p>
+			<p>The call would parse all files in <code>your/application/folder</code> for translatable strings and generate/update a JSON file <code>de_DE.js</code> in the working directory with the translation keys for the German language. The generated file can then be amended by a translator.</p>
+			<p>All options are available by invoking <code>node extract --help</code>.</p>
+			<p>Once translated the translations need to be supplied to the translation memory before any translations can be performed. The JSON with the translations can be loaded as desired but need to be passed to <code>updateTranslations</code> of the translation memory.</p>
+			<pre>translatables.translationMemory.updateTranslations("en", {
+	"{zero(number(h))} tree.": "{h} trees.",
+	"{one(number(h))} tree.": "{h} tree.",
+});</pre>
+			<h2 id="extending-with-languages-and-domains">Extending with Languages and Domains</h2>
+			<p>In order to extent the functionality you can provide new languages or provide new domains. Languages allow for new sets of translations and act as containers for domains. Domains represent certain classes of things such as numbers or objects as defined by your application.</p>
+			<p>Languages can be created by extending existing languages. To do so invoke the <code>extend</code> method of a language object. The new language can then be used as any other language. If you don't have a language in mind from which to inherit domains, extend the <code>root</code> language that does only implement core domains with sensible categories.</p>
+			<pre>var baseLanguage = translatables.translationMemory.getLanguage(base_language_code);
+var yourLanguage = baseLanguage.extend(<span style="color:darkgreen">your_language_code</span>);</pre>
+			<p>Adding or updating domains is done by calling the <code>updateDomain</code> method of the language object. In case a domain already exists it is overriden, if not it is added to the language. The domain is then used when translation keys are about to be generated by examinating the placeholders' domains. The number of categories in the domain gives the number of variants in the translation keys.</p>
+			<pre>yourLanguage.updateDomain(new Domain(<span style="color:blue">your_domain_name</span>, function formatValue(value){
+		<span class="code-comment">// Convert value to text for display; usually passing String instead of own formatter will do.</span>
+		return <span class="code-placeholder" title="Call toString, apply number formatting or define an extractor"> … </span>;
+	}, [
+	new Category(first_category_name, function isFirstCategoryMember(value){
+		<span class="code-comment">// true if value is member of this category</span>
+		return dummy(value);
+	}),
+	<span class="code-comment">// Following categories are only considered if previous don't match</span>
+	new Category(second_category, function(value){ <span class="code-placeholder" title="Check if value is in the second category"> … </span> }),
+	<span class="code-comment">// More categories here if needed</span>
+]));
+
+<span class="code-comment">// Use your language</span>
+var t = translatables.translationMemory.getAlias(<span style="color:darkgreen">your_language_code</span>);
+t("Text with {<span style="color:blue">your_domain_name</span>(placeholderName)}.", placeholder_values);</pre>
+			<p>When it comes to generating the translation keys, one variant is generated for each category in the used domains. In case multiple placeholders are used permutations of their categories will be generated. This is because it is only known at runtime which value will need to be inserted into the translation and therefore all possibile cases need to be covered while translating.</p>
 			
-			<h1>About</h1>
-			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenance are guaranteed – so feel free to use it at your own risk.</p>
-			<p>Contributions in various forms and discussions are happily accepted.</p>
+			<h1 id="download">Download</h1>
+			<p>The tool is provided as minified JavaScript file along with the extraction script. The extraction script depends on nodejs whilst the library can be run in the browser or in nodejs applications.</p>
+			<p><a href="#" class="btn btn-success btn-large">Download Bundle</a></p>
+			
+			<h1 id="about">About</h1>
+			<p>The tool was created by Augustus Kling. It is free to use but neither correctness nor continued maintenance are guaranteed – so use it at your own risk.</p>
+			<p>Contributions in various forms such as reports, corrections and discussions are happily accepted.</p>
+			<p style="text-align:right"><a class="btn btn-small btn-inverse" href="https://twitter.com/share?"><img src="https://twitter.com/favicons/favicon.ico"> Tweet</a>
+				<a class="btn btn-inverse" href="https://plus.google.com/share?url={URL}"><img src="https://www.gstatic.com/images/icons/gplus-16.png"> Share on Google+</a>
+				<a class="btn btn-inverse" href="http://www.facebook.com/sharer.php?"><img src="http://www.facebook.com/favicon.ico"> Like on Facebook</a>
+				<a class="btn btn-inverse" href="mailto:?subject=Domain%20aware%20translations"><span style="font-weight: bold;
+    text-shadow: 1px 0 3px green, -1px 0 3px green, 0 1px 3px green, -1px 0 3px green;">@</span> Mail</a>
+				<a class="btn btn-inverse" href="http://www.linkedin.com/shareArticle?mini=true&amp;url={articleUrl}&amp;title={articleTitle}&amp;summary={articleSummary}&amp;source={articleSource}"><img src="https://developer.linkedin.com/sites/all/themes/dlc/favicon.ico"> Share on LinkedIn</a>
+			</p>
 		</div>
 	</body>
 </html>
