@@ -7,17 +7,23 @@
 
 var program = require("commander");
 program.version("0")
-	.option("--codebase <path>", "Root of program code (file or directory) to parse")
-	.option("--alias <name>", "Name of function that is used in the codebase to translate", String, "t")
+	.option("--codebase <path>", "Root of program code (file or directory) to parse", function(raw){
+		return raw.split(",");
+	})
+	.option("--alias <name>", "Name of function that is used in the codebase to translate. Split multiple paths by comma.", String, "t")
 	.option("--language <language code>", "Language to generate")
 	.option("--language-folder <path>", "Folder in which translations are stored. Default is working directory.",  String, "./")
 	.option("--discard-unused", "Deletes no longer used translations")
 	.option("--discard-empty", "Deletes translation keys that point to empty translations")
+	.option("--placeholder-matcher <regexp>", "Globally applied regular expression to find placeholders. It needs to match the whole text to be replaced and needs to return a group for each placeholder name.", String, "\\{([^{}]*)\\}")
 	.parse(process.argv);
 
 var translatables = require("./translatables");
 var fs = require("fs");
 var path = require("path");
+
+// Set expression to detect placeholders in source keys
+translatables.Translation.prototype.pattern = new RegExp(program.placeholderMatcher, "g");
 
 var extractedTranslations = {};
 var translationFilePath = program.languageFolder.replace(/([^/])$/, "$1/") + program.language+".js";
@@ -96,7 +102,7 @@ function parseDirectory(path){
 		addSourceKeyFromFile(path);
 	}
 }
-parseDirectory(program.codebase);
+program.codebase.forEach(parseDirectory);
 
 Object.keys(extractedTranslations).forEach(function(sourceKey){
 	// Discard unused translations
