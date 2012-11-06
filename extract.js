@@ -20,16 +20,18 @@ var fs = require("fs");
 var path = require("path");
 
 var extractedTranslations = {};
-var translationFilePath = program.languageFolder.replace(/([^/])$/, "$1/") + program.language+".js";
+var translationFilePath = program.languageFolder.replace(/([^/])$/, "$1/") + program.language+".json";
 // Load existing translations
-if(path.existsSync(translationFilePath)){
+if(fs.existsSync(translationFilePath)){
 	extractedTranslations = JSON.parse(fs.readFileSync(translationFilePath).toString());
 }
 
 // Parse code for translations
 var translationKeysPresent = [];
 function addSourceKeyFromFile(path){
-	var content = fs.readFileSync(path).toString();
+	var content = fs.readFileSync(path).toString()
+		//Remove comments
+		.replace(/\/\*[\s\S]*?\*\//mg, '').replace(/\/\/.*$/mg, '');
 	
 	/**
 	 * Extracts translatable strings
